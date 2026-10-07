@@ -36,19 +36,62 @@ public class PlayerInteract : MonoBehaviour
     void TryInteract()
     {
         RaycastHit hit;
+        
+        // Si el rayo choca con algo...
         if (Physics.Raycast(raycastOrigin.position, raycastOrigin.forward, out hit, interactRange))
         {
+            // 1. Miramos un Estante
             if (hit.collider.CompareTag("Estante"))
             {
-                // Buscamos el script Estante en el objeto que hemos golpeado con el rayo
-                Estante estanteImpactado = hit.collider.GetComponent<Estante>();
-                
-                // Si lo encontramos, llamamos a su método
+                // Busca el script Estante en el cubo golpeado o en sus padres (EstanteBase)
+                Estante estanteImpactado = hit.collider.GetComponentInParent<Estante>();
                 if (estanteImpactado != null)
                 {
-                    estanteImpactado.InteractuarConEstante();
+                    estanteImpactado.InteractuarConEstante(inventory);
+                }
+            }
+            // 2. Miramos un Producto suelto
+           // 2. Miramos un Producto
+            else if (hit.collider.CompareTag("Producto"))
+            {
+                if (!inventory.TieneObjetoEnMano())
+                {
+                    // NUEVO: Comprobamos si el producto está emparentado a un estante
+                    Estante estantePadre = hit.collider.GetComponentInParent<Estante>();
+                    
+                    if (estantePadre != null)
+                    {
+                        // Si está en un estante, le mandamos la interacción al estante para que él gestione el vaciado
+                        estantePadre.InteractuarConEstante(inventory);
+                    }
+                    else
+                    {
+                        // Si no hay estante, es que está suelto por el suelo
+                        inventory.Recoger(hit.collider.gameObject);
+                        Debug.Log("Has recogido un producto del suelo.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Ya tienes las manos llenas.");
                 }
             }
         }
+        // Si el rayo no choca con absolutamente nada (mirando al cielo/vacío)
+        else
+        {
+            if (inventory.TieneObjetoEnMano())
+            {
+                inventory.SoltarAlSuelo();
+            }
+        }
     }
+    private PlayerInventory inventory;
+
+    private void Awake()
+    {
+        // Obtiene el script de inventario asignado a este mismo GameObject
+        inventory = GetComponent<PlayerInventory>();
+    }
+    
 }

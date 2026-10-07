@@ -2,29 +2,38 @@ using UnityEngine;
 
 public class Estante : MonoBehaviour
 {
-    // Variable para saber si el estante está ocupado
-    public bool tieneProducto = false; 
+    public GameObject productoAlmacenado = null; 
     
-    // Referencia opcional a un modelo visual (un cubo más pequeño, por ejemplo)
-    public GameObject productoVisual; 
+    // Crea un Empty GameObject hijo del estante, ponlo en la superficie y arrástralo aquí
+    public Transform puntoDeColocacion; 
 
-    public void InteractuarConEstante()
+    public void InteractuarConEstante(PlayerInventory inventario)
     {
-        if (tieneProducto)
+        // Si el estante tiene un objeto y el jugador tiene las manos vacías (Recoger del estante)
+        if (productoAlmacenado != null && !inventario.TieneObjetoEnMano())
         {
-            Debug.Log("Has recogido el producto de la estantería.");
-            tieneProducto = false;
-            
-            // Ocultamos el modelo del producto
-            if (productoVisual != null) productoVisual.SetActive(false); 
+            inventario.Recoger(productoAlmacenado);
+            productoAlmacenado = null;
+            Debug.Log("Has recogido el producto del estante.");
         }
-        else
+        // Si el estante está vacío y el jugador tiene un objeto en la mano (Colocar en el estante)
+       else if (productoAlmacenado == null && inventario.TieneObjetoEnMano())
         {
-            Debug.Log("Has colocado un producto en la estantería.");
-            tieneProducto = true;
+            productoAlmacenado = inventario.Soltar();
             
-            // Mostramos el modelo del producto
-            if (productoVisual != null) productoVisual.SetActive(true);
+            // NUEVO: Reactiva todos los colisionadores para poder interactuar de nuevo
+            Collider[] colliders = productoAlmacenado.GetComponentsInChildren<Collider>();
+            foreach (Collider col in colliders)
+            {
+                col.enabled = true;
+            }
+
+            productoAlmacenado.transform.SetParent(puntoDeColocacion);
+            productoAlmacenado.transform.localPosition = Vector3.zero;
+            productoAlmacenado.transform.localRotation = Quaternion.identity;
+            productoAlmacenado.transform.localScale = Vector3.one; 
+            
+            Debug.Log("Has colocado el producto en el estante.");
         }
     }
 }
