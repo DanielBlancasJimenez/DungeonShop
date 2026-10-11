@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // Importante: requerimos el nuevo sistema
+using UnityEngine.InputSystem;
 
 public class PlayerInteract : MonoBehaviour
 {
@@ -8,10 +8,17 @@ public class PlayerInteract : MonoBehaviour
     public Transform raycastOrigin; 
 
     [Header("Controles")]
-    // Permite asignar la tecla directamente desde el Inspector de Unity
     public InputAction interactAction; 
 
-    // En el nuevo Input System, las acciones deben habilitarse y deshabilitarse
+    [Header("Referencias")]
+    public HUDManager hudManager; // Arrastra tu objeto con el UI Document aquí
+    private PlayerInventory inventory;
+
+    private void Awake()
+    {
+        inventory = GetComponent<PlayerInventory>();
+    }
+
     private void OnEnable()
     {
         interactAction.Enable();
@@ -26,47 +33,62 @@ public class PlayerInteract : MonoBehaviour
     {
         Debug.DrawRay(raycastOrigin.position, raycastOrigin.forward * interactRange, Color.green);
 
-        // Verificamos si la acción fue activada en este frame
+        // 1. Comprobamos constantemente qué estamos mirando para actualizar la UI
+        ComprobarVision();
+
+        // 2. Comprobamos si pulsamos el botón para hacer la acción física
         if (interactAction.WasPressedThisFrame()) 
         {
             TryInteract();
         }
     }
 
-    void TryInteract()
+    void ComprobarVision()
     {
         RaycastHit hit;
-        
-        // Si el rayo choca con algo...
         if (Physics.Raycast(raycastOrigin.position, raycastOrigin.forward, out hit, interactRange))
         {
-            // 1. Miramos un Estante
+            if (hit.collider.CompareTag("Producto"))
+            {
+                // Obtenemos los datos del producto al que apuntamos
+                Producto producto = hit.collider.GetComponent<Producto>();
+                if (producto != null)
+                {
+                    hudManager.MostrarInfoProducto(producto.nombreProducto, producto.precio);
+                    return; // Salimos de la función para no ocultar la info
+                }
+            }
+        }
+        
+        // Si el rayo no choca con un Producto, ocultamos el panel
+        hudManager.OcultarInfo();
+    }
+
+    void TryInteract()
+    {
+        // ... (Mantén tu código TryInteract exactamente como lo tienes, no hay que cambiar nada aquí) ...
+        RaycastHit hit;
+        if (Physics.Raycast(raycastOrigin.position, raycastOrigin.forward, out hit, interactRange))
+        {
             if (hit.collider.CompareTag("Estante"))
             {
-                // Busca el script Estante en el cubo golpeado o en sus padres (EstanteBase)
                 Estante estanteImpactado = hit.collider.GetComponentInParent<Estante>();
                 if (estanteImpactado != null)
                 {
                     estanteImpactado.InteractuarConEstante(inventory);
                 }
             }
-            // 2. Miramos un Producto suelto
-           // 2. Miramos un Producto
             else if (hit.collider.CompareTag("Producto"))
             {
                 if (!inventory.TieneObjetoEnMano())
                 {
-                    // NUEVO: Comprobamos si el producto está emparentado a un estante
                     Estante estantePadre = hit.collider.GetComponentInParent<Estante>();
-                    
                     if (estantePadre != null)
                     {
-                        // Si está en un estante, le mandamos la interacción al estante para que él gestione el vaciado
                         estantePadre.InteractuarConEstante(inventory);
                     }
                     else
                     {
-                        // Si no hay estante, es que está suelto por el suelo
                         inventory.Recoger(hit.collider.gameObject);
                         Debug.Log("Has recogido un producto del suelo.");
                     }
@@ -76,8 +98,14 @@ public class PlayerInteract : MonoBehaviour
                     Debug.Log("Ya tienes las manos llenas.");
                 }
             }
+            else
+            {
+                if (inventory.TieneObjetoEnMano())
+                {
+                    inventory.SoltarAlSuelo();
+                }
+            }
         }
-        // Si el rayo no choca con absolutamente nada (mirando al cielo/vacío)
         else
         {
             if (inventory.TieneObjetoEnMano())
@@ -86,12 +114,4 @@ public class PlayerInteract : MonoBehaviour
             }
         }
     }
-    private PlayerInventory inventory;
-
-    private void Awake()
-    {
-        // Obtiene el script de inventario asignado a este mismo GameObject
-        inventory = GetComponent<PlayerInventory>();
-    }
-    
 }
