@@ -5,8 +5,27 @@
             <ui:Label text="Label" name="TextoNombre" style="color: rgb(225, 225, 225);"/>
             <ui:Label text="Label" name="TextoPrecio" style="position: relative; color: rgb(225, 225, 225);"/>
         </ui:VisualElement>
-        <ui:VisualElement name="ContendorDinero" style="flex-grow: 1; right: 0; top: 0; position: absolute; padding-top: 20px; padding-right: 20px; padding-bottom: 20px; padding-left: 20px;">
-            <ui:Label text="Label" name="TextoDinero" style="position: absolute; top: 20%; left: auto; right: 20%; height: 23px; width: 147px; color: rgb(255, 255, 255); font-size: 20%;"/>
+        <ui:VisualElement name="ContendorDinero" style="flex-grow: 1; right: 10px; top: 20px; position: absolute; padding-top: 2px; padding-right: 2px; padding-bottom: 2px; padding-left: 2px; left: auto; bottom: auto; text-overflow: ellipsis; flex-direction: row; flex-basis: auto; -unity-text-align: upper-center;">
+            <ui:VisualElement name="GrupoOricalco" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-center; margin-right: 10px;">
+                <ui:Label text="Label" name="TextoOricalco" style="color: rgb(255, 255, 255); -unity-font-style: normal;"/>
+                <ui:VisualElement name="IconoOricalco" style="flex-grow: 1; min-width: 25px; min-height: 25px; background-image: url(&quot;project://database/Assets/Monedas/Oricalco.jpg?fileID=2800000&amp;guid=21c108484da63f041b5654babb77b4bc&amp;type=3#Oricalco&quot;);"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="GrupoPlatino" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-center; margin-right: 10px;">
+                <ui:Label text="Label" name="TextoPlatino" style="color: rgb(255, 255, 255); -unity-font-style: normal;"/>
+                <ui:VisualElement name="IconoPlatino" style="flex-grow: 1; min-width: 25px; min-height: 25px; background-image: url(&quot;project://database/Assets/Monedas/Platino.jpg?fileID=2800000&amp;guid=04ebe9a3b291e1346acf1385a449df0d&amp;type=3#Platino&quot;);"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="GrupoOro" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-center; margin-right: 10px;">
+                <ui:Label text="Label" name="TextoOro" style="color: rgb(255, 255, 255); -unity-font-style: normal;"/>
+                <ui:VisualElement name="IconoOro" style="flex-grow: 1; min-width: 25px; min-height: 25px; background-image: url(&quot;project://database/Assets/Monedas/Oro.jpg?fileID=2800000&amp;guid=018e6f7a593f4c3439fbb7ef5116f7b4&amp;type=3#Oro&quot;);"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="GrupoPlata" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-center; margin-right: 10px;">
+                <ui:Label text="Label" name="TextoPlata" style="color: rgb(255, 255, 255); -unity-font-style: normal;"/>
+                <ui:VisualElement name="IconoPlata" style="flex-grow: 1; min-width: 25px; min-height: 25px; background-image: url(&quot;project://database/Assets/Monedas/Plata.jpg?fileID=2800000&amp;guid=a821d9b167270f3438881dfc8e644331&amp;type=3#Plata&quot;);"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="GrupoCobre" style="flex-grow: 1; flex-direction: row; -unity-text-align: upper-center; margin-right: 10px;">
+                <ui:Label text="Label" name="TextoCobre" style="color: rgb(255, 255, 255); -unity-font-style: normal;"/>
+                <ui:VisualElement name="IconoCobre" style="flex-grow: 1; min-width: 25px; min-height: 25px; background-image: url(&quot;project://database/Assets/Monedas/Cobre.jpg?fileID=2800000&amp;guid=d3035de6e93b0ab43998808d456e71dd&amp;type=3#Cobre&quot;);"/>
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

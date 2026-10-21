@@ -12,7 +12,7 @@ public class EconomiaManager : MonoBehaviour
     private void Start()
     {
         // Para probar, empezamos con algo de dinero (ej. 1 Oro, 5 Plata, 30 Cobre = 10530)
-        AñadirDinero(10530); 
+        AñadirDinero(105300306040); 
     }
 
     public void AñadirDinero(long cantidadCobre)
@@ -36,17 +36,44 @@ public class EconomiaManager : MonoBehaviour
         }
     }
 
-    private void ActualizarHUD()
+   private void ActualizarHUD()
     {
         if (hudManager != null)
         {
-            string dineroFormateado = ConvertirCobreAString(cobreTotal);
-            hudManager.ActualizarTextoDinero(dineroFormateado);
+            CalcularYMostrarMonedas(cobreTotal);
         }
     }
 
     // La magia matemática ocurre aquí
-    private string ConvertirCobreAString(long total)
+    // private string ConvertirCobreAString(long total)
+    // {
+    //     long oricalco = total / 100000000;
+    //     long resto = total % 100000000;
+        
+    //     long platino = resto / 1000000;
+    //     resto %= 1000000;
+        
+    //     long oro = resto / 10000;
+    //     resto %= 10000;
+        
+    //     long plata = resto / 100;
+    //     long cobre = resto % 100;
+
+    //     string resultado = "";
+
+    //     // Solo mostramos las monedas grandes si tenemos al menos 1
+    //     if (oricalco > 0) resultado += $"{oricalco} Ori ";
+    //     if (platino > 0) resultado += $"{platino} Plat ";
+    //     if (oro > 0) resultado += $"{oro} Oro ";
+    //     if (plata > 0) resultado += $"{plata} Pla ";
+        
+    //     // Siempre mostramos el cobre
+    //     resultado += $"{cobre} Cob"; 
+
+    //     return resultado.Trim();
+    // }
+
+    private void CalcularYMostrarMonedas(long total)
     {
         long oricalco = total / 100000000;
         long resto = total % 100000000;
@@ -60,17 +87,7 @@ public class EconomiaManager : MonoBehaviour
         long plata = resto / 100;
         long cobre = resto % 100;
 
-        string resultado = "";
-
-        // Solo mostramos las monedas grandes si tenemos al menos 1
-        if (oricalco > 0) resultado += $"{oricalco} Ori ";
-        if (platino > 0) resultado += $"{platino} Plat ";
-        if (oro > 0) resultado += $"{oro} Oro ";
-        if (plata > 0) resultado += $"{plata} Pla ";
-        
-        // Siempre mostramos el cobre
-        resultado += $"{cobre} Cob"; 
-
-        return resultado.Trim();
+        // Le mandamos los 5 números al HUD
+        hudManager.ActualizarMonedas(oricalco, platino, oro, plata, cobre);
     }
 }
