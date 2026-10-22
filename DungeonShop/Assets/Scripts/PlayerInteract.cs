@@ -50,12 +50,12 @@ public class PlayerInteract : MonoBehaviour
         {
             if (hit.collider.CompareTag("Producto"))
             {
-                // Obtenemos los datos del producto al que apuntamos
                 Producto producto = hit.collider.GetComponent<Producto>();
                 if (producto != null)
                 {
-                    hudManager.MostrarInfoProducto(producto.nombreProducto, producto.precio);
-                    return; // Salimos de la función para no ocultar la info
+                    // El error estaba aquí: cambiamos precio por precioCobre
+                    hudManager.MostrarInfoProducto(producto.nombreProducto, producto.precioCobre);
+                    return; 
                 }
             }
         }
@@ -66,7 +66,7 @@ public class PlayerInteract : MonoBehaviour
 
     void TryInteract()
     {
-        // ... (Mantén tu código TryInteract exactamente como lo tienes, no hay que cambiar nada aquí) ...
+        
         RaycastHit hit;
         if (Physics.Raycast(raycastOrigin.position, raycastOrigin.forward, out hit, interactRange))
         {
@@ -78,6 +78,17 @@ public class PlayerInteract : MonoBehaviour
                     estanteImpactado.InteractuarConEstante(inventory);
                 }
             }
+            else if (hit.collider.CompareTag("Caja"))
+            {
+                CajaRegistradora cajaImpactada = hit.collider.GetComponentInParent<CajaRegistradora>();
+                if (cajaImpactada != null)
+                {
+                    cajaImpactada.InteractuarConCaja(inventory);
+                }
+            }
+
+            //----------------------------------------------------
+
             else if (hit.collider.CompareTag("Producto"))
             {
                 if (!inventory.TieneObjetoEnMano())
@@ -97,6 +108,7 @@ public class PlayerInteract : MonoBehaviour
                 {
                     Debug.Log("Ya tienes las manos llenas.");
                 }
+                
             }
             else
             {
