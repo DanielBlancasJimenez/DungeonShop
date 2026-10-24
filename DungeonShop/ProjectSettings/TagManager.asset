@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Estante
   - Producto
+  - Caja
   layers:
   - Default
   - TransparentFX

@@ -36,4 +36,14 @@ public class Estante : MonoBehaviour
             Debug.Log("Has colocado el producto en el estante.");
         }
     }
+    public GameObject ExtraerProducto()
+    {
+        if (productoAlmacenado != null)
+        {
+            GameObject productoExtraido = productoAlmacenado;
+            productoAlmacenado = null; // Vaciamos la variable del estante
+            return productoExtraido;
+        }
+        return null;
+    }
 }

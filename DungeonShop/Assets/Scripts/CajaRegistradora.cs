@@ -3,12 +3,13 @@ using UnityEngine;
 public class CajaRegistradora : MonoBehaviour
 {
     [Header("Referencias")]
-    // Necesitamos saber a quién darle el dinero
     public EconomiaManager economia; 
+    
+    // NUEVO: Variable para saber si hay un cliente en la fila
+    public ClienteIA clienteEsperando = null;
 
     private void Start()
     {
-        // Si se nos olvida asignarlo en el Inspector, lo busca automáticamente
         if (economia == null)
         {
             economia = FindObjectOfType<EconomiaManager>();
@@ -17,36 +18,43 @@ public class CajaRegistradora : MonoBehaviour
 
     public void InteractuarConCaja(PlayerInventory inventario)
     {
-        // Comprobamos si el jugador tiene algo en las manos
-        if (inventario.TieneObjetoEnMano())
+        // 1. Priorizamos cobrar al cliente si hay alguien esperando
+        // 1. Cobrar al cliente si hay alguien esperando Y tiene un producto
+        if (clienteEsperando != null && clienteEsperando.productoEnMano != null)
         {
-            // 1. Le quitamos el objeto de la mano al jugador
+            Producto productoCliente = clienteEsperando.productoEnMano.GetComponent<Producto>();
+            
+            if (productoCliente != null)
+            {
+                // Cobramos el valor real del producto
+                economia.AñadirDinero(productoCliente.precioCobre);
+                Debug.Log($"Has cobrado {productoCliente.precioCobre} al cliente IA.");
+            }
+            
+            clienteEsperando.FinalizarCompra();
+            clienteEsperando = null;
+        }
+        // 2. Si no hay cliente, mantenemos tu lógica anterior de vender objetos de la mano
+        else if (inventario.TieneObjetoEnMano())
+        {
             GameObject objetoAVender = inventario.Soltar();
-
-            // 2. Comprobamos si ese objeto es realmente un Producto que se puede vender
             Producto producto = objetoAVender.GetComponent<Producto>();
             
             if (producto != null)
             {
-                // 3. Sumamos el dinero a nuestra economía
                 economia.AñadirDinero(producto.precioCobre);
-                
-                // 4. Destruimos el objeto del mundo 3D (se vendió)
                 Destroy(objetoAVender);
-
                 Debug.Log($"¡Has vendido {producto.nombreProducto} por {producto.precioCobre} cobres!");
             }
             else
             {
-                // Si por algún motivo cogiste algo que no es un producto (una caja vacía, etc.)
-                // se lo devolvemos a la mano
                 inventario.Recoger(objetoAVender);
                 Debug.Log("Este objeto no se puede vender.");
             }
         }
         else
         {
-            Debug.Log("No tienes ningún producto en la mano para vender.");
+            Debug.Log("No hay clientes esperando ni productos en la mano.");
         }
     }
 }
